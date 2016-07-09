@@ -23,7 +23,7 @@ import java.util.*;
  *
  * @Description Excel导入导出工具类
  */
-public class ExcelUtils {
+public class ExcelJxlUtils {
 
     /**
      * @param list      数据源

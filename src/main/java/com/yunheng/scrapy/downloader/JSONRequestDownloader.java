@@ -83,7 +83,7 @@ public class JSONRequestDownloader extends AbstractDownloader {
         } else {
             acceptStatCode = Sets.newHashSet(200);
         }
-        logger.info("downloading page {}", request.getUrl());
+        logger.debug("downloading page {}", request.getUrl());
         CloseableHttpResponse httpResponse = null;
         int statusCode=0;
         try {

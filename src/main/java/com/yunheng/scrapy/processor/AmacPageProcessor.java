@@ -78,7 +78,7 @@ public class AmacPageProcessor implements PageProcessor {
             StringBuilder recordsFunds = new StringBuilder();
             page.getHtml().xpath("/html/body/div[1]/div[2]/div/table/tbody/tr[22]/td[2]/p/a/text()")
                     .all().forEach( str -> {
-                recordsFunds.append( str ).append("\n");
+                recordsFunds.append( str ).append(System.getProperties().getProperty("line.separator"));
             });
             page.putField("recordedFund", recordsFunds );  // 备案基金
         }
