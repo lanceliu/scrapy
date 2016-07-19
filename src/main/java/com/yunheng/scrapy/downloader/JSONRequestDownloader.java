@@ -11,8 +11,10 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,10 +33,9 @@ import us.codecraft.webmagic.utils.HttpConstant;
 import us.codecraft.webmagic.utils.UrlUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -154,7 +155,47 @@ public class JSONRequestDownloader extends AbstractDownloader {
         String rawStr = (String) request.getExtra("jsonData");
         if ( StringUtils.isNotEmpty(rawStr) )
             requestBuilder.setEntity(new StringEntity(rawStr, "utf-8") );
+        Map<String,String> postParams = (Map<String, String>) request.getExtra("postParams");
+        if ( postParams != null  ) {
+
+            String urlEncodedStrs = format(postParams, null);
+            StringEntity stringEntity = null;
+            try {
+                stringEntity = new StringEntity( urlEncodedStrs );
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            requestBuilder.setEntity(stringEntity);
+
+        }
         return requestBuilder.build();
+    }
+
+
+    /**
+     * Returns a String that is suitable for use as an {@code application/x-www-form-urlencoded}
+     * list of parameters in an HTTP PUT or HTTP POST.
+     *
+     * @param requestParams  The parameters to include.
+     * @param charset The encoding to use.
+     * @return An {@code application/x-www-form-urlencoded} string
+     *
+     * @since 4.3
+     */
+    public static String format( final Map<String, String> requestParams, final Charset charset) {
+        if ( requestParams == null || requestParams.entrySet().size() == 0 ) {
+            return "";
+        }
+        List<NameValuePair> lists = new ArrayList<>();
+        Iterator<Map.Entry<String, String>> iter = requestParams.entrySet().iterator();
+        while( iter.hasNext() ) {
+            Map.Entry<String, String> entry = iter.next();
+
+            String key = entry.getKey();
+            String val = entry.getValue();
+            lists.add( new BasicNameValuePair( key, val ));
+        }
+        return URLEncodedUtils.format(lists, charset != null ? charset : Charset.forName("UTF-8"));
     }
 
     protected RequestBuilder selectRequestMethod(Request request) {

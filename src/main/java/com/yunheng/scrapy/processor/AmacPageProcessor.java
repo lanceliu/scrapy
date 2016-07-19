@@ -30,7 +30,7 @@ public class AmacPageProcessor implements PageProcessor {
 
     private Site site = Site.me().setDomain("gs.amac.org.cn")
             .addHeader("Content-Type", "application/json");
-    public static final int PAGE_SIZE = 2;
+    public static final int PAGE_SIZE = 500;
     public static final String URL_START_URL = "http://gs.amac.org.cn/amac-infodisc/api/pof/manager?page=%s&size=%s";
     public static final String URL_LIST = "http://gs\\.amac\\.org\\.cn/amac-infodisc/api/pof/manager\\?page=\\d+&size=\\d+";
     public static final String URL_DETAIL = "http://gs.amac.org.cn/amac-infodisc/res/pof/manager/%s";
@@ -106,7 +106,7 @@ public class AmacPageProcessor implements PageProcessor {
                 add("备案基金");
             }
         };
-        Spider.create(new AmacPageProcessor()).setDownloader( new JSONRequestDownloader() ).thread(3).addRequest( getListRequest(1) )
+        Spider.create(new AmacPageProcessor()).setDownloader( new JSONRequestDownloader() ).thread(10).addRequest( getListRequest(1) )
                 .addPipeline( new OneExcelPipeline("data/webmagic/mamacn/data.xls", excelCaptionList, "私募管理人列表") ).run();
     }
 
